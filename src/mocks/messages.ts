@@ -29,4 +29,25 @@ export const messages: ChatMessage[] = [
     content: "Sortie longue terminee. Sensations stables.",
     timestamp: "2026-03-04T08:26:00Z",
   },
+  {
+    id: "m-005",
+    clientId: "c-004",
+    sender: "coach",
+    content: "On reste sur des charges legeres cette semaine.",
+    timestamp: "2026-03-04T18:00:00Z",
+  },
+  {
+    id: "m-006",
+    clientId: "c-004",
+    sender: "client",
+    content: "Parfait, je valide le planning et les repas.",
+    timestamp: "2026-03-04T18:12:00Z",
+  },
+  {
+    id: "m-007",
+    clientId: "c-005",
+    sender: "coach",
+    content: "Tu peux passer sur 8 rounds samedi.",
+    timestamp: "2026-03-05T07:50:00Z",
+  },
 ];

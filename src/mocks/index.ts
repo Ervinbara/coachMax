@@ -3,3 +3,4 @@ export * from "./clients";
 export * from "./programs";
 export * from "./nutrition";
 export * from "./messages";
+export * from "./coachData";

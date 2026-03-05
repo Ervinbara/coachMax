@@ -2,12 +2,16 @@ import { router } from "expo-router";
 import { Text, YStack } from "tamagui";
 import { AppCard, Screen } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
+import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
 import { useCurrentClient } from "../../src/hooks/useCurrentClient";
+import { t } from "../../src/lib/i18n";
 import { AppTopBar } from "../../src/layout/AppTopBar";
+import { RoleNav } from "../../src/layout/RoleNav";
 import { dataService } from "../../src/services/dataService";
 
 export default function ClientProgramScreen() {
   const role = useAuthStore((state) => state.role);
+  const locale = useLocaleStore((state) => state.locale);
   const client = useCurrentClient();
   const program = client ? dataService.getProgramByClientId(client.id) : null;
 
@@ -18,10 +22,11 @@ export default function ClientProgramScreen() {
 
   return (
     <Screen>
-      <AppTopBar title="Mon programme" showBack backHref="/(client)/dashboard" />
+      <AppTopBar title={t(locale, "client.program.title")} showBack backHref="/(client)/dashboard" />
+      <RoleNav role="client" />
       <AppCard>
         <Text color="$color" fontWeight="700" fontSize={18}>
-          {program?.title ?? "Pas de programme actif"}
+          {program?.title ?? t(locale, "client.program.empty")}
         </Text>
         <YStack gap="$2">
           {program?.sessions.map((session) => (

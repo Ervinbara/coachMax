@@ -37,4 +37,28 @@ export const nutritionPlans: ClientNutritionPlan[] = [
       { time: "19:30", label: "Bowl tofu riz", calories: 760, proteins: 39, carbs: 93, fats: 25 },
     ],
   },
+  {
+    clientId: "c-004",
+    targetCalories: 2050,
+    proteinTarget: 132,
+    carbTarget: 220,
+    fatTarget: 68,
+    meals: [
+      { time: "07:45", label: "Skyr granola fruits", calories: 510, proteins: 32, carbs: 58, fats: 16 },
+      { time: "12:30", label: "Salade quinoa thon", calories: 640, proteins: 41, carbs: 62, fats: 21 },
+      { time: "19:00", label: "Omelette legumes", calories: 690, proteins: 45, carbs: 36, fats: 31 },
+    ],
+  },
+  {
+    clientId: "c-005",
+    targetCalories: 2880,
+    proteinTarget: 182,
+    carbTarget: 325,
+    fatTarget: 84,
+    meals: [
+      { time: "08:15", label: "Riz lait whey", calories: 720, proteins: 44, carbs: 98, fats: 16 },
+      { time: "13:15", label: "Boeuf riz legumes", calories: 1010, proteins: 63, carbs: 112, fats: 30 },
+      { time: "20:45", label: "Saumon pommes de terre", calories: 890, proteins: 55, carbs: 84, fats: 29 },
+    ],
+  },
 ];

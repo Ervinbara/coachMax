@@ -1,4 +1,4 @@
-import { clients, messages, nutritionPlans, programs } from "../mocks";
+import { activityEvents, clients, coachTasks, messages, nutritionPlans, paymentRecords, programs } from "../mocks";
 
 export const dataService = {
   getClients: () => clients,
@@ -7,4 +7,7 @@ export const dataService = {
   getNutritionByClientId: (clientId: string) =>
     nutritionPlans.find((nutritionPlan) => nutritionPlan.clientId === clientId),
   getMessagesByClientId: (clientId: string) => messages.filter((message) => message.clientId === clientId),
+  getCoachTasks: () => coachTasks,
+  getPaymentRecords: () => paymentRecords,
+  getLatestActivity: () => activityEvents,
 };

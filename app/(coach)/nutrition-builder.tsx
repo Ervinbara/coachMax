@@ -3,10 +3,14 @@ import { router } from "expo-router";
 import { Input, Text, XStack, YStack } from "tamagui";
 import { AppButton, AppCard, Screen } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
+import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
+import { t } from "../../src/lib/i18n";
 import { AppTopBar } from "../../src/layout/AppTopBar";
+import { RoleNav } from "../../src/layout/RoleNav";
 
 export default function NutritionBuilderScreen() {
   const role = useAuthStore((state) => state.role);
+  const locale = useLocaleStore((state) => state.locale);
   const [calories, setCalories] = useState("2500");
   const [protein, setProtein] = useState("160");
   const [carbs, setCarbs] = useState("280");
@@ -19,11 +23,12 @@ export default function NutritionBuilderScreen() {
 
   return (
     <Screen>
-      <AppTopBar title="Nutrition Builder" subtitle="Creation de plan alimentaire" showBack backHref="/(coach)/dashboard" />
+      <AppTopBar title={t(locale, "builder.nutrition.title")} subtitle={t(locale, "builder.nutrition.subtitle")} showBack backHref="/(coach)/dashboard" />
+      <RoleNav role="coach" />
       <AppCard>
         <YStack gap="$3">
           <Text color="$color" fontWeight="700" fontSize={18}>
-            Macros cibles
+            {t(locale, "builder.nutrition.step1")}
           </Text>
           <XStack gap="$2" $sm={{ fd: "column" }}>
             <YStack f={1} gap="$1">
@@ -54,9 +59,9 @@ export default function NutritionBuilderScreen() {
             </YStack>
           </XStack>
           <Text color="$color" opacity={0.7} fontSize={12}>
-            Repas types: petit dejeuner, lunch, post-workout, diner.
+            {t(locale, "builder.nutrition.step2")}
           </Text>
-          <AppButton label="Sauvegarder plan (UI only)" />
+          <AppButton label={t(locale, "builder.nutrition.save")} />
         </YStack>
       </AppCard>
     </Screen>

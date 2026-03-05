@@ -31,4 +31,24 @@ export const programs: ClientProgram[] = [
       { day: "Dimanche", focus: "Long Run", exercises: ["60 min Z2", "Recovery Stretch"] },
     ],
   },
+  {
+    clientId: "c-004",
+    title: "Pilates Rebuild",
+    durationWeeks: 10,
+    sessions: [
+      { day: "Lundi", focus: "Core Stability", exercises: ["Dead Bug", "Plank", "Bird Dog"] },
+      { day: "Mercredi", focus: "Mobility", exercises: ["Cat-Cow", "Hip Openers", "Thoracic Rotations"] },
+      { day: "Vendredi", focus: "Pilates Flow", exercises: ["Roll Up", "Single Leg Stretch", "Bridge"] },
+    ],
+  },
+  {
+    clientId: "c-005",
+    title: "Fight Camp Conditioning",
+    durationWeeks: 8,
+    sessions: [
+      { day: "Mardi", focus: "Power", exercises: ["Trap Bar Deadlift", "Med Ball Slam", "Push Press"] },
+      { day: "Jeudi", focus: "Intervals", exercises: ["Bag Rounds", "Assault Bike", "Shadowboxing"] },
+      { day: "Samedi", focus: "Engine", exercises: ["Tempo Run", "Core Finisher", "Mobility Cooldown"] },
+    ],
+  },
 ];

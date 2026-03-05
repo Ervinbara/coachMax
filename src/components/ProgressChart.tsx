@@ -1,4 +1,4 @@
-import { VictoryAxis, VictoryChart, VictoryLine, VictoryTheme } from "victory-native";
+import { VictoryArea, VictoryAxis, VictoryChart, VictoryLine, VictoryTheme } from "victory-native";
 
 type ProgressChartPoint = {
   week: string;
@@ -20,22 +20,29 @@ export const ProgressChart = ({ data }: ProgressChartProps) => (
   >
     <VictoryAxis
       style={{
-        tickLabels: { fill: "#9AA6C5", fontSize: 10 },
-        axis: { stroke: "#2B3655" },
-        ticks: { stroke: "#2B3655" },
+        tickLabels: { fill: "#A8A49E", fontSize: 11, fontFamily: "monospace" },
+        axis: { stroke: "#E5E3DE" },
+        ticks: { stroke: "#E5E3DE" },
       }}
     />
     <VictoryAxis
       dependentAxis
       style={{
-        tickLabels: { fill: "#9AA6C5", fontSize: 10 },
-        axis: { stroke: "#2B3655" },
-        grid: { stroke: "#1A2237" },
+        tickLabels: { fill: "#A8A49E", fontSize: 11, fontFamily: "monospace" },
+        axis: { stroke: "#E5E3DE" },
+        grid: { stroke: "#E5E3DE", opacity: 0.6 },
       }}
+    />
+    <VictoryArea
+      interpolation="natural"
+      style={{ data: { fill: "rgba(14, 165, 233, 0.12)", strokeWidth: 0 } }}
+      data={data}
+      x="week"
+      y="value"
     />
     <VictoryLine
       interpolation="natural"
-      style={{ data: { stroke: "#42D392", strokeWidth: 3 } }}
+      style={{ data: { stroke: "#0EA5E9", strokeWidth: 2.5 } }}
       data={data}
       x="week"
       y="value"
