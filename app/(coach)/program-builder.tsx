@@ -3,7 +3,10 @@ import { router } from "expo-router";
 import { Input, Text, XStack, YStack } from "tamagui";
 import { AppButton, AppCard, Screen } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
+import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
+import { t } from "../../src/lib/i18n";
 import { AppTopBar } from "../../src/layout/AppTopBar";
+import { RoleNav } from "../../src/layout/RoleNav";
 
 const exerciseSuggestions = [
   "Back Squat",
@@ -17,6 +20,7 @@ const exerciseSuggestions = [
 
 export default function ProgramBuilderScreen() {
   const role = useAuthStore((state) => state.role);
+  const locale = useLocaleStore((state) => state.locale);
   const [sessionName, setSessionName] = useState("Lower Body Strength");
   const [selectedExercises, setSelectedExercises] = useState<string[]>(exerciseSuggestions.slice(0, 3));
 
@@ -33,15 +37,16 @@ export default function ProgramBuilderScreen() {
 
   return (
     <Screen>
-      <AppTopBar title="Program Builder" subtitle="Creation de seances" showBack backHref="/(coach)/dashboard" />
+      <AppTopBar title={t(locale, "builder.program.title")} subtitle={t(locale, "builder.program.subtitle")} showBack backHref="/(coach)/dashboard" />
+      <RoleNav role="coach" />
       <AppCard>
         <YStack gap="$3">
           <Text color="$color" fontWeight="700" fontSize={18}>
-            Nouvelle seance
+            {t(locale, "builder.program.step1")}
           </Text>
-          <Input value={sessionName} onChangeText={setSessionName} bg="rgba(255,255,255,0.03)" borderColor="$borderColor" />
+          <Input value={sessionName} onChangeText={setSessionName} bg="#07091a" borderColor="#1D2040" color="#E8E9F5" />
           <Text color="$color" opacity={0.65} fontSize={13}>
-            Ajout d'exercices (mock data)
+            {t(locale, "builder.program.step2")}
           </Text>
           <XStack gap="$2" fw="wrap">
             {exerciseSuggestions.map((exercise) => {
@@ -56,7 +61,7 @@ export default function ProgramBuilderScreen() {
               );
             })}
           </XStack>
-          <AppButton label="Sauvegarder la seance (UI only)" />
+          <AppButton label={t(locale, "builder.program.save")} />
         </YStack>
       </AppCard>
     </Screen>

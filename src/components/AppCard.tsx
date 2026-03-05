@@ -7,14 +7,17 @@ type AppCardProps = {
 
 export const AppCard = ({ children }: AppCardProps) => (
   <Card
-    elevate
-    bordered
-    borderColor="$borderColor"
-    bg="rgba(15, 22, 40, 0.88)"
+    borderColor="#1D2040"
+    borderWidth={1}
+    bg="#0A0D24"
     br="$6"
     p="$4"
     animation="quick"
-    hoverStyle={{ bg: "rgba(21, 31, 56, 0.95)", y: -2 }}
+    shadowColor="rgba(0,0,0,0.4)"
+    shadowOpacity={1}
+    shadowRadius={10}
+    shadowOffset={{ width: 0, height: 4 }}
+    hoverStyle={{ bg: "#0F1230", y: -2, borderColor: "#303665" }}
     pressStyle={{ scale: 0.99 }}
   >
     <YStack gap="$3">{children}</YStack>
