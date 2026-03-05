@@ -1,5 +1,5 @@
-import { Link, usePathname } from "expo-router";
-import { Text, XStack } from "tamagui";
+import { router, usePathname } from "expo-router";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useLocaleStore } from "../features/settings/useLocaleStore";
 import { t } from "../lib/i18n";
 
@@ -33,35 +33,41 @@ export const RoleNav = ({ role }: RoleNavProps) => {
   const items = role === "coach" ? coachItems : clientItems;
 
   return (
-    <XStack
-      gap="$2"
-      p="$2"
-      br="$6"
-      bg="#07091a"
-      borderWidth={1}
-      borderColor="#1D2040"
-      fw="wrap"
-      mb="$1"
+    <View
+      style={{
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 8,
+        padding: 8,
+        borderRadius: 16,
+        backgroundColor: "#07091a",
+        borderWidth: 1,
+        borderColor: "#1D2040",
+        marginBottom: 4,
+      }}
     >
       {items.map((item) => {
         const active = pathname === item.href;
         return (
-          <Link key={item.href} href={item.href as never} asChild>
-            <XStack
-              px="$3"
-              py="$2"
-              br="$10"
-              bg={active ? "#6266F1" : "#10142E"}
-              borderWidth={1}
-              borderColor={active ? "#6266F1" : "#1D2040"}
-            >
-              <Text color={active ? "#FFFFFF" : "#7B80A4"} fontWeight={active ? "700" : "500"} fontSize={13}>
-                {t(locale, item.key)}
-              </Text>
-            </XStack>
-          </Link>
+          <TouchableOpacity
+            key={item.href}
+            onPress={() => router.push(item.href as never)}
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: 999,
+              backgroundColor: active ? "#6266F1" : "#10142E",
+              borderWidth: 1,
+              borderColor: active ? "#6266F1" : "#1D2040",
+            }}
+            activeOpacity={0.8}
+          >
+            <Text style={{ color: active ? "#FFFFFF" : "#7B80A4", fontWeight: active ? "700" : "500", fontSize: 13 }}>
+              {t(locale, item.key)}
+            </Text>
+          </TouchableOpacity>
         );
       })}
-    </XStack>
+    </View>
   );
 };

@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Text, XStack, YStack } from "tamagui";
+import { Text, View } from "react-native";
 import { AppButton, AppCard, Screen, StatusPill } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
@@ -23,46 +23,44 @@ export default function ClientsScreen() {
     <Screen>
       <AppTopBar title={t(locale, "nav.clients")} subtitle={t(locale, "clients.subtitle")} showBack backHref="/(coach)/dashboard" />
       <RoleNav role="coach" />
-      <YStack gap="$3">
+      <View style={{ gap: 12 }}>
         {clients.map((client) => (
           <AppCard key={client.id}>
-            <YStack gap="$2">
-              <XStack jc="space-between" ai="center">
-                <YStack>
-                  <Text color="$color" fontWeight="700" fontSize={17}>
-                    {client.fullName}
-                  </Text>
-                  <Text color="$color" opacity={0.7} fontSize={12}>
+            <View style={{ gap: 8 }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <View>
+                  <Text style={{ color: "#E8E9F5", fontWeight: "700", fontSize: 17 }}>{client.fullName}</Text>
+                  <Text style={{ color: "#E8E9F5", opacity: 0.7, fontSize: 12 }}>
                     {client.sport} • {locale === "fr" ? "prochain check-in" : "next check-in"} {client.nextCheckIn}
                   </Text>
-                </YStack>
+                </View>
                 <StatusPill
                   label={client.status}
                   tone={client.status === "critical" ? "danger" : client.status === "attention" ? "warning" : "success"}
                 />
-              </XStack>
-              <XStack jc="space-between" ai="center">
-                <Text color="$color" opacity={0.75} fontSize={13}>{t(locale, "clients.goal")}: {client.goal}</Text>
-                <Text color="$accentColor" fontWeight="700">{client.adherence}%</Text>
-              </XStack>
-              <Text color="$color" opacity={0.6} fontSize={12}>
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <Text style={{ color: "#E8E9F5", opacity: 0.75, fontSize: 13 }}>
+                  {t(locale, "clients.goal")}: {client.goal}
+                </Text>
+                <Text style={{ color: "#6266F1", fontWeight: "700" }}>{client.adherence}%</Text>
+              </View>
+              <Text style={{ color: "#E8E9F5", opacity: 0.6, fontSize: 12 }}>
                 {locale === "fr"
                   ? `Poids ${client.currentWeightKg}kg vers cible ${client.targetWeightKg}kg | serie ${client.streakDays} jours`
                   : `Weight ${client.currentWeightKg}kg toward ${client.targetWeightKg}kg target | streak ${client.streakDays} days`}
               </Text>
-              <XStack>
-                <AppButton
-                  label={t(locale, "clients.openProfile")}
-                  onPress={() => {
-                    setSelectedClientId(client.id);
-                    router.push({ pathname: "/(coach)/client-detail", params: { clientId: client.id } });
-                  }}
-                />
-              </XStack>
-            </YStack>
+              <AppButton
+                label={t(locale, "clients.openProfile")}
+                onPress={() => {
+                  setSelectedClientId(client.id);
+                  router.push({ pathname: "/(coach)/client-detail", params: { clientId: client.id } });
+                }}
+              />
+            </View>
           </AppCard>
         ))}
-      </YStack>
+      </View>
     </Screen>
   );
 }

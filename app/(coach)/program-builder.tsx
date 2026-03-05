@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { router } from "expo-router";
-import { Input, Text, XStack, YStack } from "tamagui";
+import { Text, TextInput, View } from "react-native";
 import { AppButton, AppCard, Screen } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
@@ -40,15 +40,28 @@ export default function ProgramBuilderScreen() {
       <AppTopBar title={t(locale, "builder.program.title")} subtitle={t(locale, "builder.program.subtitle")} showBack backHref="/(coach)/dashboard" />
       <RoleNav role="coach" />
       <AppCard>
-        <YStack gap="$3">
-          <Text color="$color" fontWeight="700" fontSize={18}>
+        <View style={{ gap: 12 }}>
+          <Text style={{ color: "#E8E9F5", fontWeight: "700", fontSize: 18 }}>
             {t(locale, "builder.program.step1")}
           </Text>
-          <Input value={sessionName} onChangeText={setSessionName} bg="#07091a" borderColor="#1D2040" color="#E8E9F5" />
-          <Text color="$color" opacity={0.65} fontSize={13}>
+          <TextInput
+            value={sessionName}
+            onChangeText={setSessionName}
+            style={{
+              backgroundColor: "#07091a",
+              borderWidth: 1,
+              borderColor: "#1D2040",
+              color: "#E8E9F5",
+              borderRadius: 10,
+              padding: 12,
+              fontSize: 15,
+            }}
+            placeholderTextColor="#7B80A4"
+          />
+          <Text style={{ color: "#E8E9F5", opacity: 0.65, fontSize: 13 }}>
             {t(locale, "builder.program.step2")}
           </Text>
-          <XStack gap="$2" fw="wrap">
+          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
             {exerciseSuggestions.map((exercise) => {
               const selected = selectedExercises.includes(exercise);
               return (
@@ -60,9 +73,9 @@ export default function ProgramBuilderScreen() {
                 />
               );
             })}
-          </XStack>
+          </View>
           <AppButton label={t(locale, "builder.program.save")} />
-        </YStack>
+        </View>
       </AppCard>
     </Screen>
   );

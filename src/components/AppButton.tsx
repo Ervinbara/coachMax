@@ -1,4 +1,4 @@
-import { Button, Spinner } from "tamagui";
+import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 
 type AppButtonProps = {
   label: string;
@@ -11,26 +11,32 @@ type AppButtonProps = {
 export const AppButton = ({ label, onPress, loading = false, variant = "primary", disabled = false }: AppButtonProps) => {
   const isPrimary = variant === "primary";
   const isSecondary = variant === "secondary";
+
+  const containerClass = isPrimary
+    ? "rounded-xl px-4 py-3 items-center justify-center"
+    : isSecondary
+    ? "bg-dark-nav border border-dark-border rounded-xl px-4 py-3 items-center justify-center"
+    : "rounded-xl px-4 py-3 items-center justify-center";
+
+  const textColor = isPrimary ? "#FFFFFF" : isSecondary ? "#E8E9F5" : "#7B80A4";
+
   return (
-    <Button
+    <TouchableOpacity
       onPress={onPress}
-      bg={isPrimary ? "#6266F1" : isSecondary ? "#10142E" : "transparent"}
-      color={isPrimary ? "#FFFFFF" : isSecondary ? "#E8E9F5" : "#7B80A4"}
-      borderColor={isPrimary ? "#6266F1" : isSecondary ? "#1D2040" : "transparent"}
-      borderWidth={isSecondary ? 1.5 : 1}
-      size="$4"
-      icon={loading ? <Spinner size="small" color="$color" /> : undefined}
       disabled={loading || disabled}
-      animation="quick"
-      hoverStyle={{
-        bg: isPrimary ? "#4F52CC" : isSecondary ? "#141936" : "#0F1230",
-        borderColor: isSecondary ? "#6266F1" : undefined,
-        color: isSecondary ? "#FFFFFF" : undefined,
-      }}
-      style={isPrimary ? ({ backgroundImage: "linear-gradient(135deg, #6266F1 0%, #8B8FFF 50%, #F97316 100%)" } as any) : undefined}
-      pressStyle={{ scale: 0.98 }}
+      className={containerClass}
+      style={
+        isPrimary
+          ? ({ backgroundImage: "linear-gradient(135deg, #6266F1 0%, #8B8FFF 50%, #F97316 100%)", backgroundColor: "#6266F1" } as any)
+          : undefined
+      }
+      activeOpacity={0.8}
     >
-      {label}
-    </Button>
+      {loading ? (
+        <ActivityIndicator size="small" color={textColor} />
+      ) : (
+        <Text style={{ color: textColor, fontWeight: "700", fontSize: 15 }}>{label}</Text>
+      )}
+    </TouchableOpacity>
   );
 };

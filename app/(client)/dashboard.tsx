@@ -1,5 +1,5 @@
-import { Link, router } from "expo-router";
-import { Text, XStack, YStack } from "tamagui";
+import { router } from "expo-router";
+import { Text, TouchableOpacity, View } from "react-native";
 import { AppButton, AppCard, DashboardWidget, Screen, StatusPill } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
@@ -33,86 +33,69 @@ export default function ClientDashboardScreen() {
       />
       <RoleNav role="client" />
       <AppCard>
-        <YStack gap="$2">
-          <XStack jc="space-between" ai="center">
-            <Text color="$color" fontWeight="800" fontSize={19}>
+        <View style={{ gap: 8 }}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <Text style={{ color: "#E8E9F5", fontWeight: "800", fontSize: 19 }}>
               {locale === "fr" ? "Mon cockpit perf" : "My performance cockpit"}
             </Text>
             <StatusPill
               label={client.status}
               tone={client.status === "critical" ? "danger" : client.status === "attention" ? "warning" : "success"}
             />
-          </XStack>
-          <Text color="$color" opacity={0.72}>
+          </View>
+          <Text style={{ color: "#E8E9F5", opacity: 0.72 }}>
             {locale === "fr"
               ? `Prochain check-in: ${client.nextCheckIn} • Serie active: ${client.streakDays} jours`
               : `Next check-in: ${client.nextCheckIn} • Current streak: ${client.streakDays} days`}
           </Text>
-        </YStack>
+        </View>
       </AppCard>
-      <XStack gap="$3" $sm={{ fd: "column" }}>
-        <YStack f={1}>
+
+      <View style={{ flexDirection: "row", gap: 12, flexWrap: "wrap" }}>
+        <View style={{ flex: 1 }}>
           <DashboardWidget label={t(locale, "nav.progress")} value={`${client.adherence}%`} hint={locale === "fr" ? "Sur 30 jours" : "Last 30 days"} tone="accent" />
-        </YStack>
-        <YStack f={1}>
+        </View>
+        <View style={{ flex: 1 }}>
           <DashboardWidget label={locale === "fr" ? "Seances" : "Sessions"} value={String(client.sessionsCompleted)} tone="orange" />
-        </YStack>
-        <YStack f={1}>
+        </View>
+        <View style={{ flex: 1 }}>
           <DashboardWidget label={locale === "fr" ? "Minutes/semaine" : "Minutes/week"} value={String(client.weeklyMinutes)} tone="sky" />
-        </YStack>
-      </XStack>
+        </View>
+      </View>
 
       <AppCard>
-        <YStack gap="$2">
-          <Text color="$color" fontWeight="700" fontSize={18}>
+        <View style={{ gap: 8 }}>
+          <Text style={{ color: "#E8E9F5", fontWeight: "700", fontSize: 18 }}>
             {t(locale, "client.dashboard.space")}
           </Text>
-          <XStack gap="$2" fw="wrap">
-            <Link href="/(client)/program" asChild>
-              <XStack>
-                <AppButton label={t(locale, "nav.program")} />
-              </XStack>
-            </Link>
-            <Link href="/(client)/nutrition" asChild>
-              <XStack>
-                <AppButton label={t(locale, "nav.nutrition")} variant="ghost" />
-              </XStack>
-            </Link>
-            <Link href="/(client)/progress" asChild>
-              <XStack>
-                <AppButton label={t(locale, "nav.progress")} variant="ghost" />
-              </XStack>
-            </Link>
-            <Link href="/(client)/chat" asChild>
-              <XStack>
-                <AppButton label={t(locale, "nav.chat")} variant="ghost" />
-              </XStack>
-            </Link>
-          </XStack>
-        </YStack>
+          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+            <AppButton label={t(locale, "nav.program")} onPress={() => router.push("/(client)/program")} />
+            <AppButton label={t(locale, "nav.nutrition")} variant="ghost" onPress={() => router.push("/(client)/nutrition")} />
+            <AppButton label={t(locale, "nav.progress")} variant="ghost" onPress={() => router.push("/(client)/progress")} />
+            <AppButton label={t(locale, "nav.chat")} variant="ghost" onPress={() => router.push("/(client)/chat")} />
+          </View>
+        </View>
       </AppCard>
 
       <AppCard>
-        <YStack gap="$2">
-          <Text color="$color" fontWeight="700">{t(locale, "client.dashboard.videoTitle")}</Text>
-          <Text color="$color" opacity={0.7}>{t(locale, "client.dashboard.videoDesc")}</Text>
+        <View style={{ gap: 8 }}>
+          <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "client.dashboard.videoTitle")}</Text>
+          <Text style={{ color: "#E8E9F5", opacity: 0.7 }}>{t(locale, "client.dashboard.videoDesc")}</Text>
           <AppButton label={t(locale, "client.dashboard.upload")} />
           <AppButton label={t(locale, "common.logout")} variant="ghost" onPress={logout} />
-        </YStack>
+        </View>
       </AppCard>
 
       <AppCard>
-        <YStack gap="$2">
-          <Text color="$color" fontWeight="700">{t(locale, "client.dashboard.messages")}</Text>
+        <View style={{ gap: 8 }}>
+          <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "client.dashboard.messages")}</Text>
           {messages.slice(-3).map((message) => (
-            <XStack key={message.id} jc="space-between" ai="center">
-              <Text color="$color" opacity={0.8} f={1}>
-                {message.content}
-              </Text>
+            <View key={message.id} style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <Text style={{ color: "#E8E9F5", opacity: 0.8, flex: 1 }}>{message.content}</Text>
               <StatusPill label={message.sender === "coach" ? t(locale, "status.coach") : t(locale, "status.me")} tone="neutral" />
-            </XStack>
+            </View>
           ))}
-        </YStack>
+        </View>
       </AppCard>
     </Screen>
   );

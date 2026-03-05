@@ -1,12 +1,22 @@
 import { useState } from "react";
 import { router } from "expo-router";
-import { Input, Text, XStack, YStack } from "tamagui";
+import { Text, TextInput, View } from "react-native";
 import { AppButton, AppCard, Screen } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
 import { t } from "../../src/lib/i18n";
 import { AppTopBar } from "../../src/layout/AppTopBar";
 import { RoleNav } from "../../src/layout/RoleNav";
+
+const inputStyle = {
+  backgroundColor: "#07091a",
+  borderWidth: 1,
+  borderColor: "#1D2040",
+  color: "#E8E9F5",
+  borderRadius: 10,
+  padding: 12,
+  fontSize: 15,
+} as const;
 
 export default function NutritionBuilderScreen() {
   const role = useAuthStore((state) => state.role);
@@ -26,43 +36,35 @@ export default function NutritionBuilderScreen() {
       <AppTopBar title={t(locale, "builder.nutrition.title")} subtitle={t(locale, "builder.nutrition.subtitle")} showBack backHref="/(coach)/dashboard" />
       <RoleNav role="coach" />
       <AppCard>
-        <YStack gap="$3">
-          <Text color="$color" fontWeight="700" fontSize={18}>
+        <View style={{ gap: 12 }}>
+          <Text style={{ color: "#E8E9F5", fontWeight: "700", fontSize: 18 }}>
             {t(locale, "builder.nutrition.step1")}
           </Text>
-          <XStack gap="$2" $sm={{ fd: "column" }}>
-            <YStack f={1} gap="$1">
-              <Text color="$color" opacity={0.7} fontSize={12}>
-                Calories
-              </Text>
-              <Input value={calories} onChangeText={setCalories} keyboardType="numeric" />
-            </YStack>
-            <YStack f={1} gap="$1">
-              <Text color="$color" opacity={0.7} fontSize={12}>
-                Proteines (g)
-              </Text>
-              <Input value={protein} onChangeText={setProtein} keyboardType="numeric" />
-            </YStack>
-          </XStack>
-          <XStack gap="$2" $sm={{ fd: "column" }}>
-            <YStack f={1} gap="$1">
-              <Text color="$color" opacity={0.7} fontSize={12}>
-                Glucides (g)
-              </Text>
-              <Input value={carbs} onChangeText={setCarbs} keyboardType="numeric" />
-            </YStack>
-            <YStack f={1} gap="$1">
-              <Text color="$color" opacity={0.7} fontSize={12}>
-                Lipides (g)
-              </Text>
-              <Input value={fats} onChangeText={setFats} keyboardType="numeric" />
-            </YStack>
-          </XStack>
-          <Text color="$color" opacity={0.7} fontSize={12}>
+          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={{ color: "#E8E9F5", opacity: 0.7, fontSize: 12 }}>Calories</Text>
+              <TextInput value={calories} onChangeText={setCalories} keyboardType="numeric" style={inputStyle} placeholderTextColor="#7B80A4" />
+            </View>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={{ color: "#E8E9F5", opacity: 0.7, fontSize: 12 }}>Proteines (g)</Text>
+              <TextInput value={protein} onChangeText={setProtein} keyboardType="numeric" style={inputStyle} placeholderTextColor="#7B80A4" />
+            </View>
+          </View>
+          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={{ color: "#E8E9F5", opacity: 0.7, fontSize: 12 }}>Glucides (g)</Text>
+              <TextInput value={carbs} onChangeText={setCarbs} keyboardType="numeric" style={inputStyle} placeholderTextColor="#7B80A4" />
+            </View>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={{ color: "#E8E9F5", opacity: 0.7, fontSize: 12 }}>Lipides (g)</Text>
+              <TextInput value={fats} onChangeText={setFats} keyboardType="numeric" style={inputStyle} placeholderTextColor="#7B80A4" />
+            </View>
+          </View>
+          <Text style={{ color: "#E8E9F5", opacity: 0.7, fontSize: 12 }}>
             {t(locale, "builder.nutrition.step2")}
           </Text>
           <AppButton label={t(locale, "builder.nutrition.save")} />
-        </YStack>
+        </View>
       </AppCard>
     </Screen>
   );

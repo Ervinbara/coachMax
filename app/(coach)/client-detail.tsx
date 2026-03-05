@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { Link, router, useLocalSearchParams } from "expo-router";
-import { Text, XStack, YStack } from "tamagui";
+import { router, useLocalSearchParams } from "expo-router";
+import { Text, View } from "react-native";
 import { AppButton, AppCard, ProgressChart, Screen, StatusPill } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
@@ -39,98 +39,89 @@ export default function ClientDetailScreen() {
       <AppTopBar title={client.fullName} subtitle={client.goal} showBack backHref="/(coach)/clients" />
       <RoleNav role="coach" />
       <AppCard>
-        <XStack jc="space-between" ai="center" $sm={{ fd: "column", ai: "flex-start", gap: "$2" }}>
-          <YStack gap="$1">
-            <Text color="#E8E9F5" fontWeight="800" fontSize={24}>
-              {client.fullName}
-            </Text>
-            <Text color="#7B80A4">{client.sport}</Text>
-          </YStack>
-          <XStack gap="$2" fw="wrap">
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+          <View style={{ gap: 4 }}>
+            <Text style={{ color: "#E8E9F5", fontWeight: "800", fontSize: 24 }}>{client.fullName}</Text>
+            <Text style={{ color: "#7B80A4" }}>{client.sport}</Text>
+          </View>
+          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
             <StatusPill label={`${locale === "fr" ? "Poids" : "Weight"} ${client.currentWeightKg}kg`} tone="neutral" />
             <StatusPill label={`${t(locale, "clients.goal")} ${client.targetWeightKg}kg`} tone="success" />
             <StatusPill label={`check-in ${client.nextCheckIn}`} tone="warning" />
-          </XStack>
-        </XStack>
+          </View>
+        </View>
       </AppCard>
-      <XStack gap="$3" $sm={{ fd: "column" }}>
-        <YStack f={1}>
+
+      <View style={{ flexDirection: "row", gap: 12, flexWrap: "wrap" }}>
+        <View style={{ flex: 1 }}>
           <AppCard>
-            <XStack jc="space-between" ai="center">
-              <Text color="$color" fontWeight="700">{t(locale, "detail.clientInfo")}</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "detail.clientInfo")}</Text>
               <StatusPill
                 label={client.status}
                 tone={client.status === "critical" ? "danger" : client.status === "attention" ? "warning" : "success"}
               />
-            </XStack>
-            <Text color="$color" opacity={0.75}>{client.sport}</Text>
-            <Text color="$color" opacity={0.75}>Adherence: {client.adherence}%</Text>
-            <Text color="$color" opacity={0.75}>{locale === "fr" ? "Seances terminees" : "Sessions done"}: {client.sessionsCompleted}</Text>
-            <Text color="$color" opacity={0.75}>
+            </View>
+            <Text style={{ color: "#E8E9F5", opacity: 0.75 }}>{client.sport}</Text>
+            <Text style={{ color: "#E8E9F5", opacity: 0.75 }}>Adherence: {client.adherence}%</Text>
+            <Text style={{ color: "#E8E9F5", opacity: 0.75 }}>
+              {locale === "fr" ? "Seances terminees" : "Sessions done"}: {client.sessionsCompleted}
+            </Text>
+            <Text style={{ color: "#E8E9F5", opacity: 0.75 }}>
               {locale === "fr" ? "Poids" : "Weight"}: {client.currentWeightKg}kg ({t(locale, "clients.goal").toLowerCase()} {client.targetWeightKg}kg)
             </Text>
-            <Text color="$color" opacity={0.75}>
+            <Text style={{ color: "#E8E9F5", opacity: 0.75 }}>
               {locale === "fr" ? "Serie active" : "Current streak"}: {client.streakDays} {locale === "fr" ? "jours" : "days"}
             </Text>
           </AppCard>
-        </YStack>
-        <YStack f={1}>
+        </View>
+        <View style={{ flex: 1 }}>
           <AppCard>
-            <Text color="$color" fontWeight="700">{t(locale, "detail.currentProgram")}</Text>
-            <Text color="$color" opacity={0.75}>{program?.title ?? (locale === "fr" ? "Aucun programme actif" : "No active program")}</Text>
-            <Text color="$color" opacity={0.75}>Check-in: {client.nextCheckIn}</Text>
+            <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "detail.currentProgram")}</Text>
+            <Text style={{ color: "#E8E9F5", opacity: 0.75 }}>
+              {program?.title ?? (locale === "fr" ? "Aucun programme actif" : "No active program")}
+            </Text>
+            <Text style={{ color: "#E8E9F5", opacity: 0.75 }}>Check-in: {client.nextCheckIn}</Text>
           </AppCard>
-        </YStack>
-      </XStack>
+        </View>
+      </View>
 
       <AppCard>
-        <Text color="$color" fontWeight="700">{t(locale, "detail.progress")}</Text>
+        <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "detail.progress")}</Text>
         <ProgressChart data={client.progress} />
       </AppCard>
 
       <AppCard>
-        <Text color="$color" fontWeight="700">{t(locale, "detail.nutrition")}</Text>
-        <Text color="$color" opacity={0.75}>
+        <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "detail.nutrition")}</Text>
+        <Text style={{ color: "#E8E9F5", opacity: 0.75 }}>
           {locale === "fr" ? "Cible" : "Target"}: {nutrition?.targetCalories ?? "-"} kcal | P {nutrition?.proteinTarget ?? "-"}g / C{" "}
           {nutrition?.carbTarget ?? "-"}g / F {nutrition?.fatTarget ?? "-"}g
         </Text>
-        <YStack gap="$1">
+        <View style={{ gap: 4 }}>
           {nutrition?.meals.slice(0, 2).map((meal) => (
-            <Text key={meal.time} color="$color" opacity={0.65} fontSize={12}>
+            <Text key={meal.time} style={{ color: "#E8E9F5", opacity: 0.65, fontSize: 12 }}>
               {meal.time} - {meal.label}
             </Text>
           ))}
-        </YStack>
+        </View>
       </AppCard>
 
       <AppCard>
-        <Text color="$color" fontWeight="700">{t(locale, "detail.chatRecent")}</Text>
-        <YStack gap="$2">
+        <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "detail.chatRecent")}</Text>
+        <View style={{ gap: 8 }}>
           {chatMessages.slice(-3).map((message) => (
-            <XStack key={message.id} jc="space-between">
-              <Text color="$color" opacity={0.8} f={1}>
-                {message.content}
-              </Text>
-              <Text color="$accentColor" fontSize={11}>
-                {message.sender}
-              </Text>
-            </XStack>
+            <View key={message.id} style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <Text style={{ color: "#E8E9F5", opacity: 0.8, flex: 1 }}>{message.content}</Text>
+              <Text style={{ color: "#6266F1", fontSize: 11 }}>{message.sender}</Text>
+            </View>
           ))}
-        </YStack>
+        </View>
       </AppCard>
 
-      <XStack gap="$2" $sm={{ fd: "column" }}>
-        <Link href="/(coach)/program-builder" asChild>
-          <XStack>
-            <AppButton label={t(locale, "detail.editProgram")} />
-          </XStack>
-        </Link>
-        <Link href="/(coach)/nutrition-builder" asChild>
-          <XStack>
-            <AppButton label={t(locale, "detail.editNutrition")} variant="ghost" />
-          </XStack>
-        </Link>
-      </XStack>
+      <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+        <AppButton label={t(locale, "detail.editProgram")} onPress={() => router.push("/(coach)/program-builder")} />
+        <AppButton label={t(locale, "detail.editNutrition")} variant="ghost" onPress={() => router.push("/(coach)/nutrition-builder")} />
+      </View>
     </Screen>
   );
 }

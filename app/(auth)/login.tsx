@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { router } from "expo-router";
-import { Input, Text, XStack, YStack } from "tamagui";
+import { Text, TextInput, View } from "react-native";
 import { AppButton, AppCard, Screen } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
@@ -26,59 +26,63 @@ export default function LoginScreen() {
 
   return (
     <Screen>
-      <YStack f={1} jc="center" gap="$4" maw={520} mx="auto" width="100%">
-        <Text fontSize={34} fontWeight="900" color="$color">
-          CoachOS
-        </Text>
-        <Text color="$color" opacity={0.7}>
-          {t(locale, "login.subtitle")}
-        </Text>
+      <View style={{ flex: 1, justifyContent: "center", gap: 16, maxWidth: 520, marginHorizontal: "auto", width: "100%" }}>
+        <Text style={{ fontSize: 34, fontWeight: "900", color: "#E8E9F5" }}>CoachOS</Text>
+        <Text style={{ color: "#E8E9F5", opacity: 0.7 }}>{t(locale, "login.subtitle")}</Text>
 
-        <XStack gap="$2" $sm={{ fd: "column" }}>
-          <AppCard>
-            <Text color="$color" fontWeight="700">{t(locale, "login.coachSpace")}</Text>
-            <Text color="$color" opacity={0.65} fontSize={12}>
-              {t(locale, "login.coachDesc")}
-            </Text>
-          </AppCard>
-          <AppCard>
-            <Text color="$color" fontWeight="700">{t(locale, "login.clientSpace")}</Text>
-            <Text color="$color" opacity={0.65} fontSize={12}>
-              {t(locale, "login.clientDesc")}
-            </Text>
-          </AppCard>
-        </XStack>
+        <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+          <View style={{ flex: 1 }}>
+            <AppCard>
+              <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "login.coachSpace")}</Text>
+              <Text style={{ color: "#E8E9F5", opacity: 0.65, fontSize: 12 }}>{t(locale, "login.coachDesc")}</Text>
+            </AppCard>
+          </View>
+          <View style={{ flex: 1 }}>
+            <AppCard>
+              <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "login.clientSpace")}</Text>
+              <Text style={{ color: "#E8E9F5", opacity: 0.65, fontSize: 12 }}>{t(locale, "login.clientDesc")}</Text>
+            </AppCard>
+          </View>
+        </View>
 
         <AppCard>
-          <YStack gap="$3">
-            <Text color="$color" fontSize={20} fontWeight="700">
-              {t(locale, "login.title")}
-            </Text>
-            <Input
+          <View style={{ gap: 12 }}>
+            <Text style={{ color: "#E8E9F5", fontSize: 20, fontWeight: "700" }}>{t(locale, "login.title")}</Text>
+            <TextInput
               value={email}
               onChangeText={setEmail}
               placeholder="email@coachos.app"
               autoCapitalize="none"
-              bg="#07091a"
-              borderColor="#1D2040"
-              color="#E8E9F5"
+              style={{
+                backgroundColor: "#07091a",
+                borderWidth: 1,
+                borderColor: "#1D2040",
+                color: "#E8E9F5",
+                borderRadius: 10,
+                padding: 12,
+                fontSize: 15,
+              }}
               placeholderTextColor="#7B80A4"
             />
-            <Input
+            <TextInput
               value={password}
               onChangeText={setPassword}
               secureTextEntry
               placeholder={t(locale, "login.password")}
-              bg="#07091a"
-              borderColor="#1D2040"
-              color="#E8E9F5"
+              style={{
+                backgroundColor: "#07091a",
+                borderWidth: 1,
+                borderColor: "#1D2040",
+                color: "#E8E9F5",
+                borderRadius: 10,
+                padding: 12,
+                fontSize: 15,
+              }}
               placeholderTextColor="#7B80A4"
             />
-            <YStack gap="$2">
-              <Text color="$color" opacity={0.65} fontSize={13}>
-                {t(locale, "login.role")}
-              </Text>
-              <XStack gap="$2" $sm={{ fd: "column" }}>
+            <View style={{ gap: 8 }}>
+              <Text style={{ color: "#E8E9F5", opacity: 0.65, fontSize: 13 }}>{t(locale, "login.role")}</Text>
+              <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
                 <AppButton
                   label={t(locale, "common.coach")}
                   variant={pendingRole === "coach" ? "primary" : "ghost"}
@@ -89,17 +93,15 @@ export default function LoginScreen() {
                   variant={pendingRole === "client" ? "primary" : "ghost"}
                   onPress={() => setPendingRole("client")}
                 />
-              </XStack>
-            </YStack>
+              </View>
+            </View>
             <AppButton label={t(locale, "login.submit")} onPress={handleLogin} loading={false} disabled={!canSubmit} />
             {!canSubmit ? (
-              <Text color="$color" opacity={0.5} fontSize={12}>
-                {t(locale, "login.hint")}
-              </Text>
+              <Text style={{ color: "#E8E9F5", opacity: 0.5, fontSize: 12 }}>{t(locale, "login.hint")}</Text>
             ) : null}
-          </YStack>
+          </View>
         </AppCard>
-      </YStack>
+      </View>
     </Screen>
   );
 }

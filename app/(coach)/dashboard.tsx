@@ -1,6 +1,5 @@
 import { Link, router } from "expo-router";
-import { Pressable, SafeAreaView, ScrollView, useWindowDimensions, View } from "react-native";
-import { Text, XStack, YStack } from "tamagui";
+import { Pressable, SafeAreaView, ScrollView, Text, View, useWindowDimensions } from "react-native";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
 import { dataService } from "../../src/services/dataService";
@@ -43,10 +42,10 @@ export default function CoachDashboardScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#050612" }}>
-      <XStack flex={1}>
+      <View style={{ flex: 1, flexDirection: "row" }}>
         {isDesktop ? (
-          <YStack width={252} borderRightWidth={1} borderRightColor="#171a2b" bg="#07091a" px="$3" py="$4" gap="$3">
-            <XStack ai="center" gap="$2" px="$2" py="$2">
+          <View style={{ width: 252, borderRightWidth: 1, borderRightColor: "#171a2b", backgroundColor: "#07091a", paddingHorizontal: 12, paddingVertical: 16, gap: 12 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 8, paddingVertical: 8 }}>
               <View
                 style={{
                   width: 40,
@@ -57,51 +56,45 @@ export default function CoachDashboardScreen() {
                   justifyContent: "center",
                 }}
               >
-                <Text color="#fff" fontWeight="700">
-                  CF
-                </Text>
+                <Text style={{ color: "#fff", fontWeight: "700" }}>CF</Text>
               </View>
-              <Text color="#FFFFFF" fontSize={33} fontWeight="800" letterSpacing={-0.4}>
-                CoachFlow
-              </Text>
-            </XStack>
+              <Text style={{ color: "#FFFFFF", fontSize: 33, fontWeight: "800", letterSpacing: -0.4 }}>CoachFlow</Text>
+            </View>
 
-            <YStack gap="$2" mt="$3">
+            <View style={{ gap: 8, marginTop: 12 }}>
               {NAV_ITEMS.map((item, index) => {
                 const active = index === 0;
                 return (
                   <Link key={item.href} href={item.href as never} asChild>
                     <Pressable>
-                      <XStack ai="center" gap="$2" px="$3" py="$3" br="$5" bg={active ? "#6266F1" : "transparent"}>
-                        <Text color={active ? "#fff" : "#6F7393"}>{item.icon}</Text>
-                        <Text color={active ? "#fff" : "#6F7393"} fontWeight={active ? "700" : "500"} fontSize={25}>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 12, paddingVertical: 12, borderRadius: 12, backgroundColor: active ? "#6266F1" : "transparent" }}>
+                        <Text style={{ color: active ? "#fff" : "#6F7393" }}>{item.icon}</Text>
+                        <Text style={{ color: active ? "#fff" : "#6F7393", fontWeight: active ? "700" : "500", fontSize: 25 }}>
                           {locale === "fr" ? item.labelFr : item.labelEn}
                         </Text>
-                      </XStack>
+                      </View>
                     </Pressable>
                   </Link>
                 );
               })}
-            </YStack>
+            </View>
 
-            <YStack mt="auto" pt="$3" borderTopWidth={1} borderTopColor="#171a2b">
-              <Text color="#53587A" fontSize={22}>
-                v1.0 MVP
-              </Text>
-            </YStack>
-          </YStack>
+            <View style={{ marginTop: "auto", paddingTop: 12, borderTopWidth: 1, borderTopColor: "#171a2b" }}>
+              <Text style={{ color: "#53587A", fontSize: 22 }}>v1.0 MVP</Text>
+            </View>
+          </View>
         ) : null}
 
-        <YStack flex={1}>
-          <XStack ai="center" jc="space-between" px="$5" py="$3" borderBottomWidth={1} borderBottomColor="#171a2b" bg="#0A0C1F">
-            <YStack>
-              <Text color="#FFFFFF" fontSize={titleSize} fontWeight="800">
+        <View style={{ flex: 1 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: "#171a2b", backgroundColor: "#0A0C1F" }}>
+            <View>
+              <Text style={{ color: "#FFFFFF", fontSize: titleSize, fontWeight: "800" }}>
                 {locale === "fr" ? "Bonjour, Thomas" : "Hello, Thomas"}
               </Text>
-              <Text color="#7B80A4" fontSize={subtitleSize}>
+              <Text style={{ color: "#7B80A4", fontSize: subtitleSize }}>
                 {locale === "fr" ? "Lundi 3 mars 2026" : "Monday, March 3, 2026"}
               </Text>
-            </YStack>
+            </View>
             <View
               style={{
                 paddingHorizontal: 20,
@@ -110,14 +103,14 @@ export default function CoachDashboardScreen() {
                 backgroundColor: "#6266F1",
               }}
             >
-              <Text color="#fff" fontWeight="700" fontSize={isDesktop ? 22 : 16}>
+              <Text style={{ color: "#fff", fontWeight: "700", fontSize: isDesktop ? 22 : 16 }}>
                 {locale === "fr" ? "+ Nouveau client" : "+ New client"}
               </Text>
             </View>
-          </XStack>
+          </View>
 
           <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 24, gap: 20 }}>
-            <XStack gap="$3" $sm={{ fd: "column" }}>
+            <View style={{ flexDirection: "row", gap: 12, flexWrap: "wrap" }}>
               {[
                 {
                   icon: "CL",
@@ -144,7 +137,7 @@ export default function CoachDashboardScreen() {
                   sub: locale === "fr" ? `${tasks.filter((t) => !t.done).length} urgents` : `${tasks.filter((t) => !t.done).length} urgent`,
                 },
               ].map((stat) => (
-                <YStack key={stat.label} f={1} minHeight={170} br="$6" borderWidth={1} borderColor="#1D2040" bg="#0A0D24" p="$4" jc="space-between">
+                <View key={stat.label} style={{ flex: 1, minWidth: 140, minHeight: 170, borderRadius: 16, borderWidth: 1, borderColor: "#1D2040", backgroundColor: "#0A0D24", padding: 16, justifyContent: "space-between" }}>
                   <View
                     style={{
                       width: 42,
@@ -155,26 +148,20 @@ export default function CoachDashboardScreen() {
                       justifyContent: "center",
                     }}
                   >
-                    <Text color="#fff">{stat.icon}</Text>
+                    <Text style={{ color: "#fff" }}>{stat.icon}</Text>
                   </View>
-                  <YStack gap="$1">
-                    <Text color="#fff" fontSize={cardValueSize} fontWeight="800">
-                      {stat.value}
-                    </Text>
-                    <Text color="#7E83A8" fontSize={cardLabelSize}>
-                      {stat.label}
-                    </Text>
-                    <Text color="#5D6285" fontSize={cardSubSize}>
-                      {stat.sub}
-                    </Text>
-                  </YStack>
-                </YStack>
+                  <View style={{ gap: 4 }}>
+                    <Text style={{ color: "#fff", fontSize: cardValueSize, fontWeight: "800" }}>{stat.value}</Text>
+                    <Text style={{ color: "#7E83A8", fontSize: cardLabelSize }}>{stat.label}</Text>
+                    <Text style={{ color: "#5D6285", fontSize: cardSubSize }}>{stat.sub}</Text>
+                  </View>
+                </View>
               ))}
-            </XStack>
+            </View>
 
-            <YStack gap="$3" mt="$2">
-              <XStack jc="space-between" ai="center">
-                <Text color="#fff" fontSize={isDesktop ? 42 : 28} fontWeight="800">
+            <View style={{ gap: 12, marginTop: 8 }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <Text style={{ color: "#fff", fontSize: isDesktop ? 42 : 28, fontWeight: "800" }}>
                   {locale === "fr" ? "Mes clients" : "My clients"}
                 </Text>
                 <View
@@ -187,18 +174,18 @@ export default function CoachDashboardScreen() {
                     paddingVertical: 10,
                   }}
                 >
-                  <Text color="#626889" fontSize={isDesktop ? 22 : 14}>
+                  <Text style={{ color: "#626889", fontSize: isDesktop ? 22 : 14 }}>
                     {locale === "fr" ? "Search..." : "Search..."}
                   </Text>
                 </View>
-              </XStack>
+              </View>
 
               {clientCards.map((client, idx) => (
                 <Link key={client.id} href={{ pathname: "/(coach)/client-detail", params: { clientId: client.id } }} asChild>
                   <Pressable>
-                    <YStack bg="#0A0D24" borderWidth={1} borderColor="#1D2040" br="$6" p="$4" gap="$3">
-                      <XStack jc="space-between" ai="center">
-                        <XStack ai="center" gap="$3">
+                    <View style={{ backgroundColor: "#0A0D24", borderWidth: 1, borderColor: "#1D2040", borderRadius: 16, padding: 16, gap: 12 }}>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
                           <View
                             style={{
                               width: 52,
@@ -211,15 +198,11 @@ export default function CoachDashboardScreen() {
                               justifyContent: "center",
                             }}
                           >
-                            <Text color="#8A8FFF" fontWeight="700">
-                              {client.avatar}
-                            </Text>
+                            <Text style={{ color: "#8A8FFF", fontWeight: "700" }}>{client.avatar}</Text>
                           </View>
-                          <YStack>
-                            <XStack ai="center" gap="$2">
-                              <Text color="#fff" fontWeight="700" fontSize={isDesktop ? 31 : 20}>
-                                {client.fullName}
-                              </Text>
+                          <View>
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                              <Text style={{ color: "#fff", fontWeight: "700", fontSize: isDesktop ? 31 : 20 }}>{client.fullName}</Text>
                               <View
                                 style={{
                                   paddingHorizontal: 10,
@@ -228,26 +211,22 @@ export default function CoachDashboardScreen() {
                                   backgroundColor: idx === 0 ? "#3C2D11" : idx === 1 ? "#2D2236" : "#0F2C28",
                                 }}
                               >
-                                <Text color={idx === 0 ? "#F2B94B" : idx === 1 ? "#C4A2FF" : "#22C55E"} fontSize={isDesktop ? 18 : 12} fontWeight="700">
+                                <Text style={{ color: idx === 0 ? "#F2B94B" : idx === 1 ? "#C4A2FF" : "#22C55E", fontSize: isDesktop ? 18 : 12, fontWeight: "700" }}>
                                   {idx === 0 ? (locale === "fr" ? "Priorite" : "Priority") : idx === 1 ? (locale === "fr" ? "Attention" : "Warning") : "Top"}
                                 </Text>
                               </View>
-                            </XStack>
-                            <Text color="#69709B" fontSize={isDesktop ? 25 : 15}>
+                            </View>
+                            <Text style={{ color: "#69709B", fontSize: isDesktop ? 25 : 15 }}>
                               {client.goal} • {client.currentWeightKg} kg
                             </Text>
-                          </YStack>
-                        </XStack>
+                          </View>
+                        </View>
 
-                        <YStack ai="flex-end">
-                          <Text color="#6F7393" fontSize={isDesktop ? 22 : 13}>
-                            {client.slot}
-                          </Text>
-                          <Text color="#fff" fontSize={isDesktop ? 42 : 26} fontWeight="800">
-                            {client.adherence}%
-                          </Text>
-                        </YStack>
-                      </XStack>
+                        <View style={{ alignItems: "flex-end" }}>
+                          <Text style={{ color: "#6F7393", fontSize: isDesktop ? 22 : 13 }}>{client.slot}</Text>
+                          <Text style={{ color: "#fff", fontSize: isDesktop ? 42 : 26, fontWeight: "800" }}>{client.adherence}%</Text>
+                        </View>
+                      </View>
 
                       <View style={{ height: 6, borderRadius: 3, backgroundColor: "#191D3A", overflow: "hidden" }}>
                         <View
@@ -259,14 +238,14 @@ export default function CoachDashboardScreen() {
                           }}
                         />
                       </View>
-                    </YStack>
+                    </View>
                   </Pressable>
                 </Link>
               ))}
-            </YStack>
+            </View>
           </ScrollView>
-        </YStack>
-      </XStack>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }

@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Text, YStack } from "tamagui";
+import { Text, View } from "react-native";
 import { AppCard, Screen } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
@@ -25,21 +25,24 @@ export default function ClientProgramScreen() {
       <AppTopBar title={t(locale, "client.program.title")} showBack backHref="/(client)/dashboard" />
       <RoleNav role="client" />
       <AppCard>
-        <Text color="$color" fontWeight="700" fontSize={18}>
+        <Text style={{ color: "#E8E9F5", fontWeight: "700", fontSize: 18 }}>
           {program?.title ?? t(locale, "client.program.empty")}
         </Text>
-        <YStack gap="$2">
+        <View style={{ gap: 8 }}>
           {program?.sessions.map((session) => (
-            <YStack key={`${session.day}-${session.focus}`} p="$2" br="$4" bg="rgba(255,255,255,0.02)">
-              <Text color="$accentColor" fontWeight="700">
+            <View
+              key={`${session.day}-${session.focus}`}
+              style={{ padding: 8, borderRadius: 12, backgroundColor: "rgba(255,255,255,0.02)" }}
+            >
+              <Text style={{ color: "#6266F1", fontWeight: "700" }}>
                 {session.day} - {session.focus}
               </Text>
-              <Text color="$color" opacity={0.75} fontSize={13}>
+              <Text style={{ color: "#E8E9F5", opacity: 0.75, fontSize: 13 }}>
                 {session.exercises.join(", ")}
               </Text>
-            </YStack>
+            </View>
           ))}
-        </YStack>
+        </View>
       </AppCard>
     </Screen>
   );

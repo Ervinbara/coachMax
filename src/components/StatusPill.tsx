@@ -1,4 +1,4 @@
-import { Text, XStack } from "tamagui";
+import { Text, View } from "react-native";
 
 type StatusPillProps = {
   label: string;
@@ -15,10 +15,17 @@ const toneMap = {
 export const StatusPill = ({ label, tone = "neutral" }: StatusPillProps) => {
   const colors = toneMap[tone];
   return (
-    <XStack px="$2" py="$1" br="$8" borderWidth={1} borderColor={colors.border} bg={colors.bg}>
-      <Text fontSize={11} color={colors.color} fontWeight="700">
-        {label}
-      </Text>
-    </XStack>
+    <View
+      style={{
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: colors.border,
+        backgroundColor: colors.bg,
+      }}
+    >
+      <Text style={{ fontSize: 11, color: colors.color, fontWeight: "700" }}>{label}</Text>
+    </View>
   );
 };

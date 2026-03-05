@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { XStack, YStack } from "tamagui";
 
 type ScreenProps = {
   children: ReactNode;
@@ -9,35 +8,38 @@ type ScreenProps = {
 };
 
 export const Screen = ({ children, padded = true }: ScreenProps) => {
-  const horizontalPadding = padded ? "$4" : "$0";
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0A0C1F" }}>
+    <SafeAreaView className="flex-1 bg-dark-bg">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <XStack jc="center" bg="$background" px={horizontalPadding}>
-          <YStack f={1} maw={1120} width="100%" py="$4" gap="$3">
-            <XStack
+        <View className={`flex-row justify-center bg-dark-bg ${padded ? "px-4" : "px-0"}`}>
+          <View className="flex-1 max-w-[1120px] w-full py-4 gap-3">
+            <View
               pointerEvents="none"
-              position="absolute"
-              top={-60}
-              right={-80}
-              width={220}
-              height={220}
-              br={999}
-              bg="rgba(98, 102, 241, 0.08)"
+              style={{
+                position: "absolute",
+                top: -60,
+                right: -80,
+                width: 220,
+                height: 220,
+                borderRadius: 999,
+                backgroundColor: "rgba(98, 102, 241, 0.08)",
+              }}
             />
-            <XStack
+            <View
               pointerEvents="none"
-              position="absolute"
-              bottom={-90}
-              left={-100}
-              width={260}
-              height={260}
-              br={999}
-              bg="rgba(249, 115, 22, 0.06)"
+              style={{
+                position: "absolute",
+                bottom: -90,
+                left: -100,
+                width: 260,
+                height: 260,
+                borderRadius: 999,
+                backgroundColor: "rgba(249, 115, 22, 0.06)",
+              }}
             />
             {children}
-          </YStack>
-        </XStack>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-import { Text, XStack, YStack } from "tamagui";
+import { Text, View } from "react-native";
 import { AppCard } from "./AppCard";
 
 type DashboardWidgetProps = {
@@ -19,21 +19,13 @@ export const DashboardWidget = ({ label, value, hint, tone = "accent" }: Dashboa
   const colors = toneMap[tone];
   return (
     <AppCard>
-      <YStack gap="$2" bg={colors.bg} p="$3" br="$5">
-        <Text color="#7B80A4" fontSize={12} textTransform="uppercase" letterSpacing={1}>
-          {label}
-        </Text>
-        <XStack ai="baseline" gap="$2">
-          <Text color={colors.value} fontWeight="700" fontSize={34} fontFamily="monospace">
-            {value}
-          </Text>
-        </XStack>
-        {hint ? (
-          <Text color="#7B80A4" fontSize={12}>
-            {hint}
-          </Text>
-        ) : null}
-      </YStack>
+      <View style={{ backgroundColor: colors.bg, padding: 12, borderRadius: 12, gap: 8 }}>
+        <Text style={{ color: "#7B80A4", fontSize: 12, textTransform: "uppercase", letterSpacing: 1 }}>{label}</Text>
+        <View style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}>
+          <Text style={{ color: colors.value, fontWeight: "700", fontSize: 34, fontFamily: "monospace" }}>{value}</Text>
+        </View>
+        {hint ? <Text style={{ color: "#7B80A4", fontSize: 12 }}>{hint}</Text> : null}
+      </View>
     </AppCard>
   );
 };

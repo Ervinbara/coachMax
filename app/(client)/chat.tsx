@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Text, XStack, YStack } from "tamagui";
+import { Text, View } from "react-native";
 import { AppCard, Screen } from "../../src/components";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
@@ -24,23 +24,21 @@ export default function ClientChatScreen() {
     <Screen>
       <AppTopBar title={t(locale, "client.chat.title")} showBack backHref="/(client)/dashboard" />
       <RoleNav role="client" />
-      <YStack gap="$2">
+      <View style={{ gap: 8 }}>
         {chatMessages.map((message) => (
           <AppCard key={message.id}>
-            <XStack jc="space-between" ai="center" gap="$2">
-              <Text color={message.sender === "coach" ? "$accentColor" : "$color"} fontWeight="700">
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+              <Text style={{ color: message.sender === "coach" ? "#6266F1" : "#E8E9F5", fontWeight: "700" }}>
                 {message.sender === "coach" ? t(locale, "status.coach") : t(locale, "status.me")}
               </Text>
-              <Text color="$color" opacity={0.55} fontSize={11}>
+              <Text style={{ color: "#E8E9F5", opacity: 0.55, fontSize: 11 }}>
                 {new Date(message.timestamp).toLocaleDateString()}
               </Text>
-            </XStack>
-            <Text color="$color" opacity={0.85}>
-              {message.content}
-            </Text>
+            </View>
+            <Text style={{ color: "#E8E9F5", opacity: 0.85 }}>{message.content}</Text>
           </AppCard>
         ))}
-      </YStack>
+      </View>
     </Screen>
   );
 }
