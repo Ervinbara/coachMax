@@ -1,0 +1,55 @@
+import type { Client } from "./types";
+
+export const clients: Client[] = [
+  {
+    id: "c-001",
+    fullName: "Sofia Martin",
+    sport: "Cross Training",
+    goal: "Perte de masse grasse",
+    avatar: "SM",
+    adherence: 88,
+    sessionsCompleted: 17,
+    weeklyMinutes: 294,
+    progress: [
+      { week: "S1", value: 42 },
+      { week: "S2", value: 47 },
+      { week: "S3", value: 53 },
+      { week: "S4", value: 58 },
+      { week: "S5", value: 63 },
+    ],
+  },
+  {
+    id: "c-002",
+    fullName: "Lucas Bernard",
+    sport: "Hypertrophie",
+    goal: "Prise de masse musculaire",
+    avatar: "LB",
+    adherence: 76,
+    sessionsCompleted: 12,
+    weeklyMinutes: 228,
+    progress: [
+      { week: "S1", value: 39 },
+      { week: "S2", value: 45 },
+      { week: "S3", value: 44 },
+      { week: "S4", value: 51 },
+      { week: "S5", value: 56 },
+    ],
+  },
+  {
+    id: "c-003",
+    fullName: "Emma Roche",
+    sport: "Running",
+    goal: "Preparation 10 km",
+    avatar: "ER",
+    adherence: 93,
+    sessionsCompleted: 21,
+    weeklyMinutes: 338,
+    progress: [
+      { week: "S1", value: 50 },
+      { week: "S2", value: 57 },
+      { week: "S3", value: 61 },
+      { week: "S4", value: 66 },
+      { week: "S5", value: 71 },
+    ],
+  },
+];
