@@ -128,3 +128,19 @@ Configuration secrets (exemple):
 ```bash
 npx supabase secrets set INVITE_EMAIL_PROVIDER=brevo BREVO_API_KEY=xxx BREVO_SENDER_EMAIL=no-reply@coachflow.app BREVO_SENDER_NAME=CoachFlow
 ```
+
+## Bibliotheque d'exercices interne (sans API externe)
+
+- Source principale: catalogue interne Supabase (`exercise_catalog` + `exercise_variant`)
+- Recherche SQL precise via `search_exercise_variants` (tokenisee + filtres muscle/equipement)
+- Builder programme coach filtre par:
+  - texte libre
+  - groupe musculaire
+  - equipement
+- Images gerees directement dans `exercise_variant.image_url`
+- Parametres optionnels par exercice (series, reps, tempo, RPE, RIR, repos, type/valeur charge, notes, progression, cues)
+
+Migrations SQL:
+
+- `202603072015_internal_exercise_catalog.sql`
+- `202603072120_disable_legacy_external_catalog_entries.sql`

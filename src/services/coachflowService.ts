@@ -22,6 +22,7 @@ type ProgramRow = {
 
 type ProgramSessionRow = {
   id: string;
+  day?: string;
   focus: string;
   exercises: unknown;
 };
@@ -231,25 +232,197 @@ export async function fetchClientProgram(clientId: string, coachId?: string) {
 
   const { data: sessions } = await supabase
     .from("program_sessions")
-    .select("id, focus, exercises")
+    .select("id, day, focus, exercises")
     .eq("program_id", (program as ProgramRow).id)
     .order("created_at", { ascending: true });
 
-  const mapped = ((sessions ?? []) as ProgramSessionRow[]).map((session) => {
+  const mapped = ((sessions ?? []) as ProgramSessionRow[]).flatMap((session) => {
     const exercises = Array.isArray(session.exercises) ? session.exercises : [];
-    const firstExercise = typeof exercises[0] === "string" ? exercises[0] : session.focus;
-    return {
-      id: session.id,
-      label: firstExercise,
-      sets: "3 series",
-      done: false,
-    };
+    if (!exercises.length) {
+      return [
+        {
+          id: session.id,
+          label: session.focus,
+          sets: "3 series",
+          done: false,
+        },
+      ];
+    }
+
+    return exercises.map((entry, index) => {
+      if (typeof entry === "string") {
+        return {
+          id: `${session.id}-${index}`,
+          label: entry,
+          sets: "3 series",
+          done: false,
+        };
+      }
+
+      if (typeof entry === "object" && entry) {
+        const record = entry as {
+          name?: string;
+          label?: string;
+          sets?: string;
+          reps?: string;
+          tempo?: string;
+          rpe?: string;
+          rest_seconds?: number | string;
+          rm_ref?: string;
+          rir?: string;
+          notes?: string;
+        };
+
+        const detailParts: string[] = [];
+        if (record.sets && record.reps) {
+          detailParts.push(`${record.sets}x${record.reps}`);
+        } else if (record.sets) {
+          detailParts.push(`${record.sets} series`);
+        } else if (record.reps) {
+          detailParts.push(`${record.reps} reps`);
+        }
+        if (record.tempo) detailParts.push(`Tempo ${record.tempo}`);
+        if (record.rpe) detailParts.push(`RPE ${record.rpe}`);
+        if (record.rir) detailParts.push(`RIR ${record.rir}`);
+        if (record.rest_seconds) detailParts.push(`Repos ${record.rest_seconds}s`);
+        if (record.rm_ref) detailParts.push(`Base ${record.rm_ref}`);
+
+        return {
+          id: `${session.id}-${index}`,
+          label: record.name ?? record.label ?? session.focus,
+          sets: detailParts.join(" | ") || record.sets || "3 series",
+          done: false,
+        };
+      }
+
+      return {
+        id: `${session.id}-${index}`,
+        label: session.focus,
+        sets: "3 series",
+        done: false,
+      };
+    });
   });
 
   return {
     title: (program as ProgramRow).title,
     sessions: mapped.length ? mapped : mockClients[0].sessions,
   };
+}
+
+export type ProgramExerciseInput = {
+  id: string;
+  name: string;
+  sets?: string;
+  reps?: string;
+  tempo?: string;
+  rpe?: string;
+  rir?: string;
+  restSeconds?: string;
+  loadType?: string;
+  loadValue?: string;
+  rmRef?: string;
+  unilateral?: boolean;
+  warmupSets?: string;
+  progressionRule?: string;
+  notes?: string;
+  cues?: string;
+};
+
+export async function createProgramForClient(params: {
+  clientId: string;
+  title: string;
+  sessionFocus: string;
+  exercises: ProgramExerciseInput[];
+  durationWeeks?: number;
+}): Promise<{ error: string | null; programId: string | null }> {
+  const { userId, role } = await getAuthIdentity();
+  if (!userId || role !== "coach") {
+    return { error: "Acces reserve aux coachs.", programId: null };
+  }
+
+  if (!isUuid(params.clientId)) {
+    return { error: "Client invalide.", programId: null };
+  }
+
+  const title = params.title.trim();
+  if (!title) {
+    return { error: "Titre programme requis.", programId: null };
+  }
+
+  const focus = params.sessionFocus.trim() || "Seance du jour";
+  const normalizedExercises = params.exercises
+    .map((exercise) => ({
+      id: exercise.id.trim(),
+      name: exercise.name.trim(),
+      sets: exercise.sets?.trim() || "",
+      reps: exercise.reps?.trim() || "",
+      tempo: exercise.tempo?.trim() || "",
+      rpe: exercise.rpe?.trim() || "",
+      rir: exercise.rir?.trim() || "",
+      rest_seconds: exercise.restSeconds?.trim() || "",
+      load_type: exercise.loadType?.trim() || "",
+      load_value: exercise.loadValue?.trim() || "",
+      rm_ref: exercise.rmRef?.trim() || "",
+      unilateral: Boolean(exercise.unilateral),
+      warmup_sets: exercise.warmupSets?.trim() || "",
+      progression_rule: exercise.progressionRule?.trim() || "",
+      notes: exercise.notes?.trim() || "",
+      cues: exercise.cues?.trim() || "",
+    }))
+    .filter((exercise) => Boolean(exercise.name))
+    .slice(0, 25);
+
+  if (!normalizedExercises.length) {
+    return { error: "Ajoutez au moins un exercice.", programId: null };
+  }
+
+  const { data: program, error: programError } = await supabase
+    .from("programs")
+    .insert({
+      coach_id: userId,
+      client_id: params.clientId,
+      title,
+      duration_weeks: params.durationWeeks ?? 8,
+    })
+    .select("id")
+    .single();
+
+  if (programError || !program?.id) {
+    return { error: programError?.message ?? "Creation programme impossible.", programId: null };
+  }
+
+  const exercisesPayload = normalizedExercises.map((exercise) => ({
+    variant_id: exercise.id || null,
+    name: exercise.name,
+    sets: exercise.sets || "",
+    reps: exercise.reps || "",
+    tempo: exercise.tempo || "",
+    rpe: exercise.rpe || "",
+    rir: exercise.rir || "",
+    rest_seconds: exercise.rest_seconds || "",
+    load_type: exercise.load_type || "",
+    load_value: exercise.load_value || "",
+    rm_ref: exercise.rm_ref || "",
+    unilateral: exercise.unilateral,
+    warmup_sets: exercise.warmup_sets || "",
+    progression_rule: exercise.progression_rule || "",
+    notes: exercise.notes || "",
+    cues: exercise.cues || "",
+  }));
+
+  const { error: sessionError } = await supabase.from("program_sessions").insert({
+    program_id: program.id,
+    day: "Jour 1",
+    focus,
+    exercises: exercisesPayload,
+  });
+
+  if (sessionError) {
+    return { error: sessionError.message, programId: null };
+  }
+
+  return { error: null, programId: program.id as string };
 }
 
 function formatMessages(rows: MessageRow[]): CoachflowMessage[] {
