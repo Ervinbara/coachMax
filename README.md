@@ -74,3 +74,57 @@ npx expo start
    - (option Expo) `EXPO_PUBLIC_SUPABASE_URL` et `EXPO_PUBLIC_SUPABASE_ANON_KEY`
 3. Le client est initialise dans `src/lib/supabaseClient.ts`
 4. Les ecrans utilisent encore des donnees mock dans `src/mocks/*`
+
+## Invitations coach -> client (email + fallback manuel)
+
+Configuration `.env`:
+
+- `EXPO_PUBLIC_APP_BASE_URL` (ex: `http://localhost:8081`)
+- `EXPO_PUBLIC_INVITE_EMAIL_PROVIDER`:
+  - `disabled` (par defaut, pas d'envoi auto)
+  - `supabase-function` (recommande: logique email cote serveur)
+  - `webhook` (Brevo/Mailjet via endpoint intermediaire)
+- `EXPO_PUBLIC_INVITE_EMAIL_WEBHOOK_URL` (obligatoire si mode `webhook`)
+
+Comportement:
+
+- L'invitation est toujours creee en base.
+- L'envoi email est tente selon le provider.
+- Si l'envoi auto ne fonctionne pas, le coach peut copier/partager un texte d'invitation pret a envoyer manuellement.
+
+### Provider serveur Brevo/Mailjet (pret a brancher)
+
+La fonction Supabase `send-invitation-email` est prete dans:
+
+- `supabase/functions/send-invitation-email/index.ts`
+
+Choix provider (secret serveur, pas public):
+
+- `INVITE_EMAIL_PROVIDER=brevo`
+- ou `INVITE_EMAIL_PROVIDER=mailjet`
+- ou `INVITE_EMAIL_PROVIDER=disabled`
+
+Secrets Brevo:
+
+- `BREVO_API_KEY`
+- `BREVO_SENDER_EMAIL`
+- `BREVO_SENDER_NAME`
+
+Secrets Mailjet:
+
+- `MAILJET_API_KEY`
+- `MAILJET_API_SECRET`
+- `MAILJET_SENDER_EMAIL`
+- `MAILJET_SENDER_NAME`
+
+Deploiement:
+
+```bash
+npx supabase functions deploy send-invitation-email
+```
+
+Configuration secrets (exemple):
+
+```bash
+npx supabase secrets set INVITE_EMAIL_PROVIDER=brevo BREVO_API_KEY=xxx BREVO_SENDER_EMAIL=no-reply@coachflow.app BREVO_SENDER_NAME=CoachFlow
+```

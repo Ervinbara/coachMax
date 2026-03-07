@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { router } from "expo-router";
-import { Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Text, TextInput, View } from "react-native";
 import { AppButton, AppCard, Screen } from "../../src/components";
+import { colors } from "../../src/design/tokens";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
 import { t } from "../../src/lib/i18n";
@@ -19,10 +20,15 @@ const exerciseSuggestions = [
 ];
 
 export default function ProgramBuilderScreen() {
+  const initialized = useAuthStore((state) => state.initialized);
   const role = useAuthStore((state) => state.role);
   const locale = useLocaleStore((state) => state.locale);
   const [sessionName, setSessionName] = useState("Lower Body Strength");
   const [selectedExercises, setSelectedExercises] = useState<string[]>(exerciseSuggestions.slice(0, 3));
+
+  if (!initialized) {
+    return <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />;
+  }
 
   if (role !== "coach") {
     router.replace("/(auth)/login");

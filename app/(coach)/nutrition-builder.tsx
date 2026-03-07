@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { router } from "expo-router";
-import { Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Text, TextInput, View } from "react-native";
 import { AppButton, AppCard, Screen } from "../../src/components";
+import { colors } from "../../src/design/tokens";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
 import { t } from "../../src/lib/i18n";
@@ -19,12 +20,17 @@ const inputStyle = {
 } as const;
 
 export default function NutritionBuilderScreen() {
+  const initialized = useAuthStore((state) => state.initialized);
   const role = useAuthStore((state) => state.role);
   const locale = useLocaleStore((state) => state.locale);
   const [calories, setCalories] = useState("2500");
   const [protein, setProtein] = useState("160");
   const [carbs, setCarbs] = useState("280");
   const [fats, setFats] = useState("75");
+
+  if (!initialized) {
+    return <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />;
+  }
 
   if (role !== "coach") {
     router.replace("/(auth)/login");

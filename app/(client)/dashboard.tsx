@@ -1,6 +1,7 @@
-import { router } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Redirect, router } from "expo-router";
+import { ActivityIndicator, Text, View } from "react-native";
 import { AppButton, AppCard, DashboardWidget, Screen, StatusPill } from "../../src/components";
+import { colors } from "../../src/design/tokens";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
 import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
 import { useCurrentClient } from "../../src/hooks/useCurrentClient";
@@ -10,15 +11,19 @@ import { RoleNav } from "../../src/layout/RoleNav";
 import { dataService } from "../../src/services/dataService";
 
 export default function ClientDashboardScreen() {
+  const initialized = useAuthStore((state) => state.initialized);
   const role = useAuthStore((state) => state.role);
   const logout = useAuthStore((state) => state.logout);
   const locale = useLocaleStore((state) => state.locale);
   const client = useCurrentClient();
   const messages = client ? dataService.getMessagesByClientId(client.id) : [];
 
+  if (!initialized) {
+    return <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />;
+  }
+
   if (role !== "client") {
-    router.replace("/(auth)/login");
-    return null;
+    return <Redirect href="/(auth)/login" />;
   }
 
   if (!client) {

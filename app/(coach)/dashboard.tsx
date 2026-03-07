@@ -1,251 +1,79 @@
-import { Link, router } from "expo-router";
-import { Pressable, SafeAreaView, ScrollView, Text, View, useWindowDimensions } from "react-native";
+import { useMemo } from "react";
+import { Redirect } from "expo-router";
+import { ActivityIndicator, Text, View } from "react-native";
+import {
+  AppShell,
+  Card,
+  ClientRowCard,
+  ProgressChartCard,
+  ScrollColumn,
+  SectionHeader,
+  StatCard,
+  TaskListCard,
+} from "../../src/components/coachflow";
+import { useResponsive } from "../../src/design/responsive";
+import { colors, spacing, typography } from "../../src/design/tokens";
 import { useAuthStore } from "../../src/features/auth/useAuthStore";
-import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
-import { dataService } from "../../src/services/dataService";
-
-const NAV_ITEMS = [
-  { icon: "[]", labelFr: "Dashboard", labelEn: "Dashboard", href: "/(coach)/dashboard" },
-  { icon: "CL", labelFr: "Clients", labelEn: "Clients", href: "/(coach)/clients" },
-  { icon: "PR", labelFr: "Programmes", labelEn: "Programs", href: "/(coach)/program-builder" },
-  { icon: "NU", labelFr: "Nutrition", labelEn: "Nutrition", href: "/(coach)/nutrition-builder" },
-];
+import { useCoachflowClients } from "../../src/hooks/useCoachflowClients";
+import { coachProfile, dayTasks, globalProgress } from "../../src/mocks/coachflow";
 
 export default function CoachDashboardScreen() {
-  const { width } = useWindowDimensions();
-  const isDesktop = width >= 1024;
+  const { isDesktop, isTablet } = useResponsive();
+  const initialized = useAuthStore((state) => state.initialized);
   const role = useAuthStore((state) => state.role);
-  const locale = useLocaleStore((state) => state.locale);
-  const clients = dataService.getClients();
-  const activity = dataService.getLatestActivity();
-  const tasks = dataService.getCoachTasks();
+  const { clients, loading, error } = useCoachflowClients();
 
-  if (role !== "coach") {
-    router.replace("/(auth)/login");
-    return null;
+  const topClients = useMemo(() => clients.slice(0, 3), [clients]);
+
+  if (!initialized || loading) {
+    return <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />;
   }
 
-  const clientCards = clients
-    .slice()
-    .sort((a, b) => b.adherence - a.adherence)
-    .slice(0, 3)
-    .map((client, index) => ({
-      ...client,
-      slot: index === 0 ? "Mon 09:00" : index === 1 ? "Tue 18:00" : "Wed 07:30",
-    }));
-
-  const titleSize = isDesktop ? 50 : 34;
-  const subtitleSize = isDesktop ? 26 : 18;
-  const cardValueSize = isDesktop ? 56 : 40;
-  const cardLabelSize = isDesktop ? 24 : 16;
-  const cardSubSize = isDesktop ? 22 : 14;
+  if (role !== "coach") {
+    return <Redirect href="/(auth)/login" />;
+  }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#050612" }}>
-      <View style={{ flex: 1, flexDirection: "row" }}>
-        {isDesktop ? (
-          <View style={{ width: 252, borderRightWidth: 1, borderRightColor: "#171a2b", backgroundColor: "#07091a", paddingHorizontal: 12, paddingVertical: 16, gap: 12 }}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 8, paddingVertical: 8 }}>
-              <View
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 12,
-                  backgroundColor: "#5B5CE9",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={{ color: "#fff", fontWeight: "700" }}>CF</Text>
-              </View>
-              <Text style={{ color: "#FFFFFF", fontSize: 33, fontWeight: "800", letterSpacing: -0.4 }}>CoachFlow</Text>
-            </View>
-
-            <View style={{ gap: 8, marginTop: 12 }}>
-              {NAV_ITEMS.map((item, index) => {
-                const active = index === 0;
-                return (
-                  <Link key={item.href} href={item.href as never} asChild>
-                    <Pressable>
-                      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 12, paddingVertical: 12, borderRadius: 12, backgroundColor: active ? "#6266F1" : "transparent" }}>
-                        <Text style={{ color: active ? "#fff" : "#6F7393" }}>{item.icon}</Text>
-                        <Text style={{ color: active ? "#fff" : "#6F7393", fontWeight: active ? "700" : "500", fontSize: 25 }}>
-                          {locale === "fr" ? item.labelFr : item.labelEn}
-                        </Text>
-                      </View>
-                    </Pressable>
-                  </Link>
-                );
-              })}
-            </View>
-
-            <View style={{ marginTop: "auto", paddingTop: 12, borderTopWidth: 1, borderTopColor: "#171a2b" }}>
-              <Text style={{ color: "#53587A", fontSize: 22 }}>v1.0 MVP</Text>
-            </View>
-          </View>
-        ) : null}
-
-        <View style={{ flex: 1 }}>
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: "#171a2b", backgroundColor: "#0A0C1F" }}>
-            <View>
-              <Text style={{ color: "#FFFFFF", fontSize: titleSize, fontWeight: "800" }}>
-                {locale === "fr" ? "Bonjour, Thomas" : "Hello, Thomas"}
-              </Text>
-              <Text style={{ color: "#7B80A4", fontSize: subtitleSize }}>
-                {locale === "fr" ? "Lundi 3 mars 2026" : "Monday, March 3, 2026"}
-              </Text>
-            </View>
-            <View
-              style={{
-                paddingHorizontal: 20,
-                paddingVertical: 12,
-                borderRadius: 14,
-                backgroundColor: "#6266F1",
-              }}
-            >
-              <Text style={{ color: "#fff", fontWeight: "700", fontSize: isDesktop ? 22 : 16 }}>
-                {locale === "fr" ? "+ Nouveau client" : "+ New client"}
-              </Text>
-            </View>
-          </View>
-
-          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 24, gap: 20 }}>
-            <View style={{ flexDirection: "row", gap: 12, flexWrap: "wrap" }}>
-              {[
-                {
-                  icon: "CL",
-                  value: String(clients.length),
-                  label: locale === "fr" ? "Clients actifs" : "Active clients",
-                  sub: locale === "fr" ? `+${Math.max(1, clients.length - 3)} ce mois` : `+${Math.max(1, clients.length - 3)} this month`,
-                },
-                {
-                  icon: "PR",
-                  value: String(clients.reduce((s, c) => s + c.sessionsCompleted, 0)),
-                  label: locale === "fr" ? "Seances / sem." : "Sessions / week",
-                  sub: locale === "fr" ? "Objectif: 30" : "Goal: 30",
-                },
-                {
-                  icon: "OK",
-                  value: `${Math.round(clients.reduce((s, c) => s + c.adherence, 0) / clients.length)}%`,
-                  label: locale === "fr" ? "Taux de reussite" : "Completion rate",
-                  sub: locale === "fr" ? "Objectifs atteints" : "Goals reached",
-                },
-                {
-                  icon: "MS",
-                  value: String(activity.filter((a) => a.type === "message").length),
-                  label: locale === "fr" ? "Messages" : "Messages",
-                  sub: locale === "fr" ? `${tasks.filter((t) => !t.done).length} urgents` : `${tasks.filter((t) => !t.done).length} urgent`,
-                },
-              ].map((stat) => (
-                <View key={stat.label} style={{ flex: 1, minWidth: 140, minHeight: 170, borderRadius: 16, borderWidth: 1, borderColor: "#1D2040", backgroundColor: "#0A0D24", padding: 16, justifyContent: "space-between" }}>
-                  <View
-                    style={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: 12,
-                      backgroundColor: "#14183A",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text style={{ color: "#fff" }}>{stat.icon}</Text>
-                  </View>
-                  <View style={{ gap: 4 }}>
-                    <Text style={{ color: "#fff", fontSize: cardValueSize, fontWeight: "800" }}>{stat.value}</Text>
-                    <Text style={{ color: "#7E83A8", fontSize: cardLabelSize }}>{stat.label}</Text>
-                    <Text style={{ color: "#5D6285", fontSize: cardSubSize }}>{stat.sub}</Text>
-                  </View>
-                </View>
-              ))}
-            </View>
-
-            <View style={{ gap: 12, marginTop: 8 }}>
-              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <Text style={{ color: "#fff", fontSize: isDesktop ? 42 : 28, fontWeight: "800" }}>
-                  {locale === "fr" ? "Mes clients" : "My clients"}
-                </Text>
-                <View
-                  style={{
-                    backgroundColor: "#10142E",
-                    borderWidth: 1,
-                    borderColor: "#1D2040",
-                    borderRadius: 12,
-                    paddingHorizontal: 16,
-                    paddingVertical: 10,
-                  }}
-                >
-                  <Text style={{ color: "#626889", fontSize: isDesktop ? 22 : 14 }}>
-                    {locale === "fr" ? "Search..." : "Search..."}
-                  </Text>
-                </View>
-              </View>
-
-              {clientCards.map((client, idx) => (
-                <Link key={client.id} href={{ pathname: "/(coach)/client-detail", params: { clientId: client.id } }} asChild>
-                  <Pressable>
-                    <View style={{ backgroundColor: "#0A0D24", borderWidth: 1, borderColor: "#1D2040", borderRadius: 16, padding: 16, gap: 12 }}>
-                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                        <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-                          <View
-                            style={{
-                              width: 52,
-                              height: 52,
-                              borderRadius: 26,
-                              borderWidth: 1,
-                              borderColor: "#303665",
-                              backgroundColor: "#121742",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <Text style={{ color: "#8A8FFF", fontWeight: "700" }}>{client.avatar}</Text>
-                          </View>
-                          <View>
-                            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                              <Text style={{ color: "#fff", fontWeight: "700", fontSize: isDesktop ? 31 : 20 }}>{client.fullName}</Text>
-                              <View
-                                style={{
-                                  paddingHorizontal: 10,
-                                  paddingVertical: 4,
-                                  borderRadius: 999,
-                                  backgroundColor: idx === 0 ? "#3C2D11" : idx === 1 ? "#2D2236" : "#0F2C28",
-                                }}
-                              >
-                                <Text style={{ color: idx === 0 ? "#F2B94B" : idx === 1 ? "#C4A2FF" : "#22C55E", fontSize: isDesktop ? 18 : 12, fontWeight: "700" }}>
-                                  {idx === 0 ? (locale === "fr" ? "Priorite" : "Priority") : idx === 1 ? (locale === "fr" ? "Attention" : "Warning") : "Top"}
-                                </Text>
-                              </View>
-                            </View>
-                            <Text style={{ color: "#69709B", fontSize: isDesktop ? 25 : 15 }}>
-                              {client.goal} • {client.currentWeightKg} kg
-                            </Text>
-                          </View>
-                        </View>
-
-                        <View style={{ alignItems: "flex-end" }}>
-                          <Text style={{ color: "#6F7393", fontSize: isDesktop ? 22 : 13 }}>{client.slot}</Text>
-                          <Text style={{ color: "#fff", fontSize: isDesktop ? 42 : 26, fontWeight: "800" }}>{client.adherence}%</Text>
-                        </View>
-                      </View>
-
-                      <View style={{ height: 6, borderRadius: 3, backgroundColor: "#191D3A", overflow: "hidden" }}>
-                        <View
-                          style={{
-                            width: `${client.adherence}%`,
-                            height: "100%",
-                            borderRadius: 3,
-                            backgroundColor: "#7B61FF",
-                          }}
-                        />
-                      </View>
-                    </View>
-                  </Pressable>
-                </Link>
-              ))}
-            </View>
-          </ScrollView>
+    <AppShell
+      title="Bonjour Thomas!"
+      subtitle="Vue globale de vos clients"
+      profileName={coachProfile.name}
+      profileAvatar={coachProfile.avatarUrl}
+      activeMenu="dashboard"
+      navRole="coach"
+    >
+      <ScrollColumn>
+        <View style={{ flexDirection: "row", gap: spacing.md, flexWrap: "wrap" }}>
+          <StatCard label="Clients actifs" value={String(clients.length)} hint="Suivi actif" />
+          <StatCard label="Messages" value="-" hint="Voir messagerie" />
+          <StatCard label="Poids moyen" value="-" hint="En cours" />
         </View>
-      </View>
-    </SafeAreaView>
+
+        <Card>
+          <SectionHeader title="Mes Clients" action="Ajouter un client" />
+          {error ? <Text style={{ ...typography.small, color: "#D94343" }}>{error}</Text> : null}
+          <View style={{ gap: spacing.sm }}>
+            {topClients.map((client) => (
+              <ClientRowCard key={client.id} client={client} href={`/(coach)/client-detail?clientId=${client.id}`} />
+            ))}
+            {!topClients.length ? (
+              <Text style={{ ...typography.small, color: colors.textSecondary }}>
+                Aucun client lie. Ajoutez un client ou liez un compte client a ce coach.
+              </Text>
+            ) : null}
+          </View>
+        </Card>
+
+        <View style={{ flexDirection: isDesktop || isTablet ? "row" : "column", gap: spacing.md }}>
+          <View style={{ flex: 1 }}>
+            <ProgressChartCard title="Progression Globale" values={globalProgress} suffix="kg" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <TaskListCard tasks={dayTasks} />
+          </View>
+        </View>
+      </ScrollColumn>
+    </AppShell>
   );
 }
+

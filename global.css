@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  margin: 0;
+  background: #f4f7fb;
+  font-family: Manrope, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}

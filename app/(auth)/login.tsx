@@ -1,107 +1,188 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { router } from "expo-router";
-import { Text, TextInput, View } from "react-native";
-import { AppButton, AppCard, Screen } from "../../src/components";
-import { useAuthStore } from "../../src/features/auth/useAuthStore";
-import { useLocaleStore } from "../../src/features/settings/useLocaleStore";
-import { t } from "../../src/lib/i18n";
+import { ActivityIndicator, Text, TextInput, View } from "react-native";
+import { PrimaryButton, SecondaryButton } from "../../src/components/coachflow";
+import { colors, radius, spacing, typography } from "../../src/design/tokens";
+import { useAuthStore, type UserRole } from "../../src/features/auth/useAuthStore";
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [pendingRole, setPendingRole] = useState<"coach" | "client">("coach");
-  const loginAs = useAuthStore((state) => state.loginAs);
-  const locale = useLocaleStore((state) => state.locale);
+  const [email, setEmail] = useState("thomas@coachflow.fr");
+  const [password, setPassword] = useState("password123");
+  const [fullName, setFullName] = useState("Thomas Durand");
+  const [pendingRole, setPendingRole] = useState<UserRole>("coach");
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
 
-  const canSubmit = useMemo(() => email.length > 3 && password.length > 3, [email, password]);
+  const initialized = useAuthStore((state) => state.initialized);
+  const loading = useAuthStore((state) => state.loading);
+  const role = useAuthStore((state) => state.role);
+  const user = useAuthStore((state) => state.user);
+  const error = useAuthStore((state) => state.error);
+  const signIn = useAuthStore((state) => state.signIn);
+  const signUp = useAuthStore((state) => state.signUp);
+  const setRole = useAuthStore((state) => state.setRole);
 
-  const handleLogin = () => {
-    loginAs(pendingRole);
-    if (pendingRole === "coach") {
+  useEffect(() => {
+    if (!initialized) return;
+    if (role === "coach") {
       router.replace("/(coach)/dashboard");
       return;
     }
-    router.replace("/(client)/dashboard");
+    if (role === "client") {
+      router.replace("/(client)/program");
+    }
+  }, [initialized, role]);
+
+  const buttonLabel = useMemo(() => {
+    if (loading) return "Chargement...";
+    return mode === "signin" ? "Se connecter" : "Creer un compte";
+  }, [loading, mode]);
+
+  const handleSubmit = async () => {
+    if (mode === "signin") {
+      await signIn(email.trim(), password);
+      return;
+    }
+
+    await signUp({
+      email: email.trim(),
+      password,
+      role: pendingRole,
+      fullName: fullName.trim(),
+    });
   };
 
-  return (
-    <Screen>
-      <View style={{ flex: 1, justifyContent: "center", gap: 16, maxWidth: 520, marginHorizontal: "auto", width: "100%" }}>
-        <Text style={{ fontSize: 34, fontWeight: "900", color: "#E8E9F5" }}>CoachOS</Text>
-        <Text style={{ color: "#E8E9F5", opacity: 0.7 }}>{t(locale, "login.subtitle")}</Text>
+  const handleSetRole = async (nextRole: UserRole) => {
+    await setRole(nextRole);
+  };
 
-        <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-          <View style={{ flex: 1 }}>
-            <AppCard>
-              <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "login.coachSpace")}</Text>
-              <Text style={{ color: "#E8E9F5", opacity: 0.65, fontSize: 12 }}>{t(locale, "login.coachDesc")}</Text>
-            </AppCard>
-          </View>
-          <View style={{ flex: 1 }}>
-            <AppCard>
-              <Text style={{ color: "#E8E9F5", fontWeight: "700" }}>{t(locale, "login.clientSpace")}</Text>
-              <Text style={{ color: "#E8E9F5", opacity: 0.65, fontSize: 12 }}>{t(locale, "login.clientDesc")}</Text>
-            </AppCard>
-          </View>
+  if (!initialized) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    );
+  }
+
+  const isAuthenticatedWithoutRole = Boolean(user) && !role;
+
+  return (
+    <View style={styles.page}>
+      <View style={styles.card}>
+        <View>
+          <Text style={styles.brand}>Coach<Text style={{ color: colors.primary }}>Flow</Text></Text>
+          <Text style={styles.subtitle}>Connexion a votre espace coaching</Text>
         </View>
 
-        <AppCard>
-          <View style={{ gap: 12 }}>
-            <Text style={{ color: "#E8E9F5", fontSize: 20, fontWeight: "700" }}>{t(locale, "login.title")}</Text>
+        {isAuthenticatedWithoutRole ? (
+          <View style={{ gap: spacing.sm }}>
+            <Text style={styles.helper}>Votre compte existe, choisissez votre role pour activer votre espace.</Text>
+            <PrimaryButton label="Activer Espace Coach" onPress={() => handleSetRole("coach")} />
+            <SecondaryButton label="Activer Espace Client" onPress={() => handleSetRole("client")} />
+          </View>
+        ) : (
+          <>
+            {mode === "signup" ? (
+              <TextInput
+                value={fullName}
+                onChangeText={setFullName}
+                placeholder="Nom complet"
+                placeholderTextColor={colors.textMuted}
+                style={styles.input}
+              />
+            ) : null}
+
             <TextInput
               value={email}
               onChangeText={setEmail}
-              placeholder="email@coachos.app"
+              placeholder="Email"
+              placeholderTextColor={colors.textMuted}
               autoCapitalize="none"
-              style={{
-                backgroundColor: "#07091a",
-                borderWidth: 1,
-                borderColor: "#1D2040",
-                color: "#E8E9F5",
-                borderRadius: 10,
-                padding: 12,
-                fontSize: 15,
-              }}
-              placeholderTextColor="#7B80A4"
+              keyboardType="email-address"
+              style={styles.input}
             />
             <TextInput
               value={password}
               onChangeText={setPassword}
+              placeholder="Mot de passe"
+              placeholderTextColor={colors.textMuted}
               secureTextEntry
-              placeholder={t(locale, "login.password")}
-              style={{
-                backgroundColor: "#07091a",
-                borderWidth: 1,
-                borderColor: "#1D2040",
-                color: "#E8E9F5",
-                borderRadius: 10,
-                padding: 12,
-                fontSize: 15,
-              }}
-              placeholderTextColor="#7B80A4"
+              style={styles.input}
             />
-            <View style={{ gap: 8 }}>
-              <Text style={{ color: "#E8E9F5", opacity: 0.65, fontSize: 13 }}>{t(locale, "login.role")}</Text>
-              <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-                <AppButton
-                  label={t(locale, "common.coach")}
-                  variant={pendingRole === "coach" ? "primary" : "ghost"}
-                  onPress={() => setPendingRole("coach")}
-                />
-                <AppButton
-                  label={t(locale, "common.client")}
-                  variant={pendingRole === "client" ? "primary" : "ghost"}
-                  onPress={() => setPendingRole("client")}
-                />
+
+            {mode === "signup" ? (
+              <View style={{ flexDirection: "row", gap: spacing.sm }}>
+                <View style={{ flex: 1 }}>
+                  <PrimaryButton label={pendingRole === "coach" ? "Coach (OK)" : "Coach"} onPress={() => setPendingRole("coach")} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <SecondaryButton label={pendingRole === "client" ? "Client (OK)" : "Client"} onPress={() => setPendingRole("client")} />
+                </View>
               </View>
-            </View>
-            <AppButton label={t(locale, "login.submit")} onPress={handleLogin} loading={false} disabled={!canSubmit} />
-            {!canSubmit ? (
-              <Text style={{ color: "#E8E9F5", opacity: 0.5, fontSize: 12 }}>{t(locale, "login.hint")}</Text>
             ) : null}
-          </View>
-        </AppCard>
+
+            <PrimaryButton label={buttonLabel} onPress={handleSubmit} />
+            <SecondaryButton
+              label={mode === "signin" ? "Creer un compte" : "J'ai deja un compte"}
+              onPress={() => setMode((current) => (current === "signin" ? "signup" : "signin"))}
+            />
+          </>
+        )}
+
+        {error ? <Text style={styles.error}>{error}</Text> : null}
       </View>
-    </Screen>
+    </View>
   );
 }
+
+const styles = {
+  centered: {
+    flex: 1,
+    backgroundColor: colors.pageBg,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  page: {
+    flex: 1,
+    backgroundColor: colors.pageBg,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    padding: spacing.lg,
+  },
+  card: {
+    width: "100%" as const,
+    maxWidth: 460,
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.xl,
+    gap: spacing.md,
+  },
+  brand: {
+    ...typography.h1,
+    color: colors.textMain,
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.textSecondary,
+    marginTop: 6,
+  },
+  helper: {
+    ...typography.body,
+    color: colors.textSecondary,
+  },
+  input: {
+    height: 50,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: "#fff",
+    paddingHorizontal: 14,
+    color: colors.textMain,
+    ...typography.body,
+  },
+  error: {
+    ...typography.small,
+    color: "#D94343",
+  },
+};
